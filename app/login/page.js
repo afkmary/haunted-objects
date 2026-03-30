@@ -11,7 +11,6 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../lib/firebase";
-import styles from "./login.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
@@ -29,27 +28,7 @@ export default function LoginPage() {
     setShake(false);
 
     setTimeout(() => setShake(true), 10);
-    setTimeout(() => setShake(false), 500);
-  };
-
-  const validateForm = () => {
-    if (!email.trim() || !password.trim()) {
-      triggerError("Please enter both email and password.");
-      return false;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      triggerError("Please enter a valid email address.");
-      return false;
-    }
-
-    if (password.length < 6) {
-      triggerError("Password must be at least 6 characters.");
-      return false;
-    }
-
-    return true;
+    setTimeout(() => setShake(false), 400);
   };
 
   const redirectByRole = async (uid) => {
@@ -57,7 +36,7 @@ export default function LoginPage() {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      triggerError("No user profile found. Please sign up first.");
+      triggerError("No user profile found.");
       return;
     }
 
@@ -74,23 +53,18 @@ export default function LoginPage() {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!validateForm()) return;
+    if (!email.trim() || !password.trim()) {
+      triggerError("Enter email and password.");
+      return;
+    }
 
     setLoading(true);
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       await redirectByRole(userCredential.user.uid);
-    } catch (error) {
-      if (error.code === "auth/invalid-credential") {
-        triggerError("Invalid email or password.");
-      } else if (error.code === "auth/user-not-found") {
-        triggerError("No account found with that email.");
-      } else if (error.code === "auth/wrong-password") {
-        triggerError("Incorrect password.");
-      } else {
-        triggerError("Login failed. Please try again.");
-      }
+    } catch {
+      triggerError("Invalid login credentials.");
     } finally {
       setLoading(false);
     }
@@ -107,7 +81,7 @@ export default function LoginPage() {
       const userRef = doc(db, "users", userCredential.user.uid);
       const userSnap = await getDoc(userRef);
 
-      // If first-time Google user, create customer profile automatically
+      // auto-create customer if first time
       if (!userSnap.exists()) {
         await setDoc(userRef, {
           fullName: userCredential.user.displayName || "",
@@ -117,86 +91,109 @@ export default function LoginPage() {
       }
 
       await redirectByRole(userCredential.user.uid);
-    } catch (error) {
-      triggerError("Google sign-in failed. Please try again.");
+    } catch {
+      triggerError("Google sign-in failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className={styles.page}>
-      <div className={`${styles.loginBox} ${shake ? styles.shake : ""}`}>
-        <div className={styles.logoArea}>
-          <div className={styles.logoWrapper}>
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-32 pb-8 flex justify-center">
+      <div
+        className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""
+          }`}
+      >
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <div className="relative inline-block">
             <Image
               src="/hauntedlogo.png"
               alt="Haunted Objects logo"
               width={250}
               height={250}
-              className={styles.logo}
+              className="object-contain opacity-50"
+              priority
             />
-            <h1 className={styles.titleOverlay}>HAUNTED OBJECTS</h1>
+            <h1 className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[2rem] font-normal tracking-[0.18em] text-white/90 [font-family:var(--font-cormorant)]">
+              HAUNTED OBJECTS
+            </h1>
           </div>
         </div>
 
-        <form onSubmit={handleLogin} className={styles.form}>
-          <div className={styles.fieldWrap}>
-            <label htmlFor="email" className={styles.label}>
+        {/* Form */}
+        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          {/* Email */}
+          <div className="flex flex-col gap-2.5">
+            <label className="text-[0.95rem] tracking-[0.04em] text-white [font-family:var(--font-poppins)]">
               EMAIL
             </label>
             <input
-              id="email"
               type="email"
               placeholder="EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
+              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[#333] font-sans outline-none placeholder:italic placeholder:text-[#8a8a8a]"
             />
           </div>
 
-          <div className={styles.fieldWrap}>
-            <label htmlFor="password" className={styles.label}>
+          {/* Password */}
+          <div className="flex flex-col gap-2.5">
+            <label className="text-[0.95rem] tracking-[0.04em] text-white [font-family:var(--font-poppins)]">
               PASSWORD
             </label>
 
-            <div className={styles.passwordWrapper}>
+            <div className="relative w-full">
               <input
-                id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={styles.input}
+                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[#333] font-sans outline-none placeholder:italic placeholder:text-[#8a8a8a]"
               />
+
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={styles.toggleBtn}
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[#555] hover:text-black"
               >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
               </button>
             </div>
           </div>
 
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {/* Error */}
+          {errorMessage && (
+            <p className="text-[0.9rem] text-[#ffbaba] font-sans">
+              {errorMessage}
+            </p>
+          )}
 
-          <button type="submit" className={styles.loginButton} disabled={loading}>
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-4 w-full rounded-md bg-[#49D357] px-4 py-4 text-[0.95rem] font-sans text-black cursor-pointer hover:brightness-85 disabled:opacity-70"
+          >
             {loading ? "LOGGING IN..." : "LOGIN"}
           </button>
         </form>
 
+        {/* Google Button */}
         <button
           onClick={handleGoogleLogin}
-          className={styles.googleButton}
-          disabled={loading}
+          className="mt-3 w-full rounded-md bg-white px-4 py-4 text-black cursor-pointer font-sans hover:bg-gray-200 flex items-center justify-center gap-2"
         >
-          <img src="/googlelogo.png" alt="Google" className={styles.googleIcon} />
-          <span>Sign in with Google</span>
+          <img src="/googlelogo.png" className="w-4 h-4" />
+          Sign in with Google
         </button>
 
-        <p className={styles.signupText}>
-          Don&apos;t have an account? <Link href="/signup">Sign up</Link>
+        {/* Signup */}
+        <p className="mt-4 text-center text-white text-sm font-sans">
+          Don’t have an account?{" "}
+          <Link href="/signup" className="underline">
+            Sign up
+          </Link>
         </p>
       </div>
     </main>

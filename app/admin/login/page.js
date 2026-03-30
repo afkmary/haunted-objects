@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../../../lib/firebase";
-import styles from "./adminLogin.module.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function AdminLoginPage() {
@@ -14,32 +13,27 @@ export default function AdminLoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
 
   const triggerError = (message) => {
     setErrorMessage(message);
     setShake(false);
 
     setTimeout(() => setShake(true), 10);
-    setTimeout(() => setShake(false), 500);
-  };
-
-  const validateForm = () => {
-    if (!email.trim() || !password.trim()) {
-      triggerError("Enter admin email and password.");
-      return false;
-    }
-    return true;
+    setTimeout(() => setShake(false), 400);
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage("");
 
-    if (!validateForm()) return;
+    if (!email.trim() || !password.trim()) {
+      triggerError("Enter admin email and password.");
+      return;
+    }
 
     setLoading(true);
 
@@ -51,21 +45,18 @@ export default function AdminLoginPage() {
 
       if (!userSnap.exists()) {
         triggerError("No admin profile found.");
-        setLoading(false);
         return;
       }
 
       const userData = userSnap.data();
 
-      // ADMIN AUTH ONLY
       if (userData.role !== "admin") {
         triggerError("Access denied. Not an admin.");
         return;
       }
 
       router.push("/admin");
-
-    } catch (error) {
+    } catch {
       triggerError("Invalid admin credentials.");
     } finally {
       setLoading(false);
@@ -73,55 +64,93 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className={styles.page}>
-      <div className={`${styles.loginBox} ${shake ? styles.shake : ""}`}>
-        <div className={styles.logoArea}>
-          <div className={styles.logoWrapper}>
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-50 pb-8 flex justify-center">
+      <div
+        className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""}`}
+      >
+        <div className="mb-8 flex justify-center">
+          <div className="relative inline-block">
             <Image
               src="/hauntedlogo.png"
               alt="Haunted Objects logo"
               width={250}
               height={250}
-              className={styles.logo}
+              className="object-contain opacity-50"
+              priority
             />
-            <h1 className={styles.titleOverlay}>HAUNTED OBJECTS</h1>
+            <h1 className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[2rem] 
+            font-normal tracking-[0.18em] text-white/90 [font-family:var(--font-cormorant)]">
+              HAUNTED OBJECTS
+            </h1>
           </div>
         </div>
 
-        <form onSubmit={handleLogin} className={styles.form}>
-          <div className={styles.fieldWrap}>
-            <label className={styles.label}>EMAIL</label>
+        <form
+          onSubmit={handleLogin}
+          className={[
+            "flex flex-col gap-4",
+            shake ? "translate-x-1" : "translate-x-0",
+            "transition-transform duration-75",
+          ].join(" ")}
+        >
+          <div className="flex flex-col gap-2.5">
+            <label
+              htmlFor="email"
+              className="text-[0.95rem] font-normal tracking-[0.04em] text-white [font-family:var(--font-poppins)]"
+            >
+              EMAIL
+            </label>
             <input
+              id="email"
               type="email"
               placeholder="ADMIN EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={styles.input}
+              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[0.95rem] text-[#333] outline-none placeholder:text-[#8a8a8a] 
+              placeholder:italic font-sans"
             />
           </div>
 
-          <div className={styles.passwordWrapper}>
-            <input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="PASSWORD"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
-            />
-
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className={styles.toggleBtn}
+          <div className="flex flex-col gap-2.5">
+            <label
+              htmlFor="password"
+              className="text-[0.95rem] font-normal tracking-[0.04em] text-white font-sans"
             >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
+              PASSWORD
+            </label>
+
+            <div className="relative w-full">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="PASSWORD"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[0.95rem] text-[#333] outline-none placeholder:text-[#8a8a8a] 
+                placeholder:italic font-sans"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-[#555] hover:text-black"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+              </button>
+            </div>
           </div>
 
-          {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+          {errorMessage && (
+            <p className="text-[0.9rem] text-[#ffbaba] [font-family:var(--font-poppins)]">
+              {errorMessage}
+            </p>
+          )}
 
-          <button type="submit" className={styles.loginButton} disabled={loading}>
+          <button
+            className="mt-4 w-full rounded-md bg-[#49D357] px-4 py-4 text-[0.95rem] font-sans text-black 
+            active:scale-95 transition hover:brightness-85 cursor-pointer disabled:cursor-not-allowed disabled:opacity-70"
+          >
             {loading ? "LOGGING IN..." : "LOGIN"}
           </button>
         </form>
