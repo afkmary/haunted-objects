@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-50 pb-8 flex justify-center">
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-20 pb-8 flex justify-center">
       <div
         className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""}`}
       >
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
           <div className="flex flex-col gap-2.5">
             <label
               htmlFor="email"
-              className="text-[0.95rem] font-normal tracking-[0.04em] text-white [font-family:var(--font-poppins)]"
+              className="text-[0.95rem] font-normal tracking-[0.04em] text-white font-sans"
             >
               EMAIL
             </label>
@@ -106,8 +106,8 @@ export default function AdminLoginPage() {
               placeholder="ADMIN EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[0.95rem] text-[#333] outline-none placeholder:text-[#8a8a8a] 
-              placeholder:italic font-sans"
+              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[0.95rem] text-[#333] outline-none
+              placeholder:text-[#8a8a8a] placeholder:italic font-sans placeholder:text-[0.8rem]"
             />
           </div>
 
@@ -126,8 +126,8 @@ export default function AdminLoginPage() {
                 placeholder="PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[0.95rem] text-[#333] outline-none placeholder:text-[#8a8a8a] 
-                placeholder:italic font-sans"
+                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[0.95rem] text-[#333] outline-none
+                placeholder:text-[#8a8a8a] placeholder:italic font-sans placeholder:text-[0.8rem]"
               />
 
               <button
@@ -142,7 +142,7 @@ export default function AdminLoginPage() {
           </div>
 
           {errorMessage && (
-            <p className="text-[0.9rem] text-[#ffbaba] [font-family:var(--font-poppins)]">
+            <p className="text-[0.9rem] text-[#ffbaba] font-sans">
               {errorMessage}
             </p>
           )}

@@ -99,7 +99,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-32 pb-8 flex justify-center">
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-20 pb-8 flex justify-center">
       <div
         className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""
           }`}
@@ -125,7 +125,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
           {/* Email */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-[0.95rem] tracking-[0.04em] text-white [font-family:var(--font-poppins)]">
+            <label className="text-[0.95rem] tracking-[0.04em] text-white font-sans">
               EMAIL
             </label>
             <input
@@ -133,13 +133,14 @@ export default function LoginPage() {
               placeholder="EMAIL"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[#333] font-sans outline-none placeholder:italic placeholder:text-[#8a8a8a]"
+              className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 text-[#333] font-sans outline-none
+              placeholder:italic placeholder:text-[#8a8a8a] placeholder:text-[0.8rem]"
             />
           </div>
 
           {/* Password */}
           <div className="flex flex-col gap-2.5">
-            <label className="text-[0.95rem] tracking-[0.04em] text-white [font-family:var(--font-poppins)]">
+            <label className="text-[0.95rem] tracking-[0.04em] text-white font-sans">
               PASSWORD
             </label>
 
@@ -149,7 +150,8 @@ export default function LoginPage() {
                 placeholder="PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[#333] font-sans outline-none placeholder:italic placeholder:text-[#8a8a8a]"
+                className="w-full rounded-lg bg-[#f3f3f3] px-4 py-4 pr-17 text-[#333] font-sans outline-none
+                placeholder:italic placeholder:text-[#8a8a8a] placeholder:text-[0.8rem]"
               />
 
               <button
