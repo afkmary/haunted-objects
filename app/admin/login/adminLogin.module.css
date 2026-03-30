@@ -63,6 +63,7 @@
   color: #ffffff;
   font-size: 0.95rem;
   font-weight: 400;
+  letter-spacing: 0.04em;
 }
 
 .input {
@@ -99,7 +100,7 @@
   border: none;
   cursor: pointer;
 
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: #555;
 }
 

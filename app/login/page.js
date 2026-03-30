@@ -9,15 +9,17 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../../lib/firebase";
 import styles from "./login.module.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [shake, setShake] = useState(false);
@@ -26,13 +28,8 @@ export default function LoginPage() {
     setErrorMessage(message);
     setShake(false);
 
-    setTimeout(() => {
-      setShake(true);
-    }, 10);
-
-    setTimeout(() => {
-      setShake(false);
-    }, 500);
+    setTimeout(() => setShake(true), 10);
+    setTimeout(() => setShake(false), 500);
   };
 
   const validateForm = () => {
@@ -60,7 +57,7 @@ export default function LoginPage() {
     const userSnap = await getDoc(userRef);
 
     if (!userSnap.exists()) {
-      triggerError("No user profile found.");
+      triggerError("No user profile found. Please sign up first.");
       return;
     }
 
@@ -87,6 +84,10 @@ export default function LoginPage() {
     } catch (error) {
       if (error.code === "auth/invalid-credential") {
         triggerError("Invalid email or password.");
+      } else if (error.code === "auth/user-not-found") {
+        triggerError("No account found with that email.");
+      } else if (error.code === "auth/wrong-password") {
+        triggerError("Incorrect password.");
       } else {
         triggerError("Login failed. Please try again.");
       }
@@ -102,9 +103,22 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
+
+      const userRef = doc(db, "users", userCredential.user.uid);
+      const userSnap = await getDoc(userRef);
+
+      // If first-time Google user, create customer profile automatically
+      if (!userSnap.exists()) {
+        await setDoc(userRef, {
+          fullName: userCredential.user.displayName || "",
+          email: userCredential.user.email || "",
+          role: "customer",
+        });
+      }
+
       await redirectByRole(userCredential.user.uid);
     } catch (error) {
-      triggerError("Google sign-in failed.");
+      triggerError("Google sign-in failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -114,14 +128,16 @@ export default function LoginPage() {
     <main className={styles.page}>
       <div className={`${styles.loginBox} ${shake ? styles.shake : ""}`}>
         <div className={styles.logoArea}>
-          <Image
-            src="/hauntedlogo.png"
-            alt="Haunted Objects logo"
-            width={200}
-            height={200}
-            className={styles.logo}
-          />
-          <h1 className={styles.title}>HAUNTED OBJECTS</h1>
+          <div className={styles.logoWrapper}>
+            <Image
+              src="/hauntedlogo.png"
+              alt="Haunted Objects logo"
+              width={250}
+              height={250}
+              className={styles.logo}
+            />
+            <h1 className={styles.titleOverlay}>HAUNTED OBJECTS</h1>
+          </div>
         </div>
 
         <form onSubmit={handleLogin} className={styles.form}>
@@ -143,14 +159,24 @@ export default function LoginPage() {
             <label htmlFor="password" className={styles.label}>
               PASSWORD
             </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="PASSWORD"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={styles.input}
-            />
+
+            <div className={styles.passwordWrapper}>
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="PASSWORD"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={styles.input}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className={styles.toggleBtn}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
 
           {errorMessage && <p className={styles.error}>{errorMessage}</p>}
@@ -165,7 +191,8 @@ export default function LoginPage() {
           className={styles.googleButton}
           disabled={loading}
         >
-          Sign in with Google
+          <img src="/googlelogo.png" alt="Google" className={styles.googleIcon} />
+          <span>Sign in with Google</span>
         </button>
 
         <p className={styles.signupText}>
