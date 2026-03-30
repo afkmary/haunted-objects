@@ -3,8 +3,11 @@
   background: #2d2b2b;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 2rem;
+  align-items: flex-start;
+  padding-top: 250px;
+
+  font-family: var(--font-poppins);
+  font-weight: 100;
 }
 
 .loginBox {
@@ -17,6 +20,11 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.logoWrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .logo {
@@ -32,11 +40,10 @@
   color: white;
   font-family: var(--font-cormorant);
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   font-size: 2rem;
 
   opacity: 0.9;
-  pointer-events: none;
   white-space: nowrap;
 }
 
@@ -55,24 +62,45 @@
 .label {
   color: #ffffff;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .input {
   width: 100%;
   padding: 1rem;
+  padding-right: 60px;
   border: none;
   border-radius: 8px;
   background: #f3f3f3;
   color: #333;
   font-size: 0.95rem;
-  font-style: italic;
+  font-style: normal;
   outline: none;
   box-sizing: border-box;
 }
 
 .input::placeholder {
+  font-style: italic;
   color: #8a8a8a;
+}
+
+.passwordWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.toggleBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  font-size: 0.8rem;
+  color: #555;
 }
 
 .loginButton {
@@ -81,10 +109,10 @@
   padding: 1rem;
   border: none;
   border-radius: 6px;
-  background: #9bcb78;
+  background: #49D357;
   color: #000;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
 }
 
