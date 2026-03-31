@@ -64,7 +64,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-20 pb-8 flex justify-center">
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-25 pb-8 flex justify-center">
       <div
         className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""}`}
       >
@@ -142,7 +142,7 @@ export default function AdminLoginPage() {
           </div>
 
           {errorMessage && (
-            <p className="text-[0.9rem] text-[#ffbaba] font-sans">
+            <p className="rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-[0.9rem] text-red-200 font-sans">
               {errorMessage}
             </p>
           )}

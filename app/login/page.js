@@ -99,7 +99,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-20 pb-8 flex justify-center">
+    <main className="min-h-screen bg-[#2d2b2b] px-8 pt-25 pb-8 flex justify-center">
       <div
         className={`w-full max-w-90 ${shake ? "animate-[shake_0.35s_ease-in-out]" : ""
           }`}
@@ -166,7 +166,7 @@ export default function LoginPage() {
 
           {/* Error */}
           {errorMessage && (
-            <p className="text-[0.9rem] text-[#ffbaba] font-sans">
+            <p className="rounded-lg border border-red-400/20 bg-red-500/10 px-4 py-3 text-[0.9rem] text-red-200 font-sans">
               {errorMessage}
             </p>
           )}
@@ -175,7 +175,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="mt-4 w-full rounded-md bg-[#49D357] px-4 py-4 text-[0.95rem] font-sans text-black cursor-pointer hover:brightness-85 disabled:opacity-70"
+            className="mt-4 w-full rounded-md bg-[#49D357] px-4 py-4 text-[0.95rem] font-sans text-black cursor-pointer hover:brightness-70 disabled:opacity-70"
           >
             {loading ? "LOGGING IN..." : "LOGIN"}
           </button>
