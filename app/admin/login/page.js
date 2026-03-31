@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
               priority
             />
             <h1 className="pointer-events-none absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[2rem] 
-            font-normal tracking-[0.18em] text-white/90 [font-family:var(--font-cormorant)]">
+            font-normal tracking-[0.18em] text-white/90 font-serif">
               HAUNTED OBJECTS
             </h1>
           </div>
