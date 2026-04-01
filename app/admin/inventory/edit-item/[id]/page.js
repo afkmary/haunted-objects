@@ -119,7 +119,11 @@ export default function EditItemPage() {
       .split(",")
       .map((img) => img.trim())
       .filter((img) => img !== "")
-      .map((img) => (img.startsWith("/") ? img : `/${img}`));
+      .map((img) =>
+        img.startsWith("/products/")
+          ? img
+          : `/products/${img.replace(/^\//, "")}`
+      );
 
     if (formData.images.trim() && imageArray.length === 0) {
       newErrors.images = "Enter at least one image file name";
