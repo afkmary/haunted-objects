@@ -130,7 +130,7 @@ export default function AddItemPage() {
   return (
     <>
       <div className="mb-8 flex items-center gap-5">
-        <h1 className="whitespace-nowrap text-[2.1rem] tracking-[0.06em] text-[#2d241d] font-serif">
+        <h1 className="whitespace-nowrap text-[2.1rem] tracking-[0.06em] text-[#2d241d] font-serif font-bold">
           ADD ITEM
         </h1>
         <div className="h-px w-full bg-[#5e5a56]" />
