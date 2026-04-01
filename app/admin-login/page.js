@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { auth, db } from "../../../lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function AdminLoginPage() {
