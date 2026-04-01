@@ -30,9 +30,11 @@ export default function ManageInventoryPage() {
 
           return {
             id: docSnapshot.id,
+            itemId: data.itemId || "",
             name: data.itemName || "Untitled Product",
             price: parseFloat(data.Price?.replace("$", "")) || 0,
-            image: data.image || "/placeholder.png",
+            image: data.image || "",
+            images: data.images || [],
             brand: data.Brand || "",
             condition: data.Condition || "",
             qty: data.Qty || "",

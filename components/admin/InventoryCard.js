@@ -27,7 +27,7 @@ export default function InventoryCard({
     <div className="flex h-75 w-52.5 flex-col rounded-md border border-white/20 bg-[#7f7f7f]/40 p-3 text-white font-sans">
       <div className="relative mb-3 h-42.5 w-full overflow-hidden rounded-sm bg-white/10">
         <Image
-          src={item.image}
+          src={item.images?.[0] || item.image || "/placeholder.png"}
           alt={item.name}
           fill
           sizes="210px"
@@ -47,7 +47,7 @@ export default function InventoryCard({
 
       <div className="mt-3 flex gap-2">
         <Link
-          href={`/admin/inventory/edit/${item.id}`}
+          href={`/admin/inventory/edit-item/${item.id}`}
           className="flex-1 rounded-md bg-black/30 px-2 py-1.5 text-center text-[12px] text-white transition hover:bg-black/40"
         >
           Edit

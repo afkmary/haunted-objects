@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { addDoc, collection } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export default function AddItemPage() {
+export default function EditItemPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id;
 
   const [formData, setFormData] = useState({
     itemId: "",
@@ -20,9 +22,57 @@ export default function AddItemPage() {
   });
 
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    const fetchItem = async () => {
+      try {
+        setLoading(true);
+        setErrorMessage("");
+
+        const docRef = doc(db, "products", id);
+        const docSnap = await getDoc(docRef);
+
+        if (!docSnap.exists()) {
+          setErrorMessage("Item not found.");
+          setLoading(false);
+          return;
+        }
+
+        const data = docSnap.data();
+
+        const imageList =
+          Array.isArray(data.images) && data.images.length > 0
+            ? data.images
+            : data.image
+              ? [data.image]
+              : [];
+
+        setFormData({
+          itemId: data.itemId || "",
+          itemName: data.itemName || "",
+          Brand: data.Brand || "",
+          Condition: data.Condition || "",
+          Description: data.Description || "",
+          Price: data.Price || "",
+          Qty: data.Qty || "",
+          images: imageList.map((img) => img.replace(/^\//, "")).join(", "),
+        });
+      } catch (error) {
+        console.error("Error fetching item:", error);
+        setErrorMessage("Failed to load item.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchItem();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,11 +132,11 @@ export default function AddItemPage() {
     }
 
     try {
-      setLoading(true);
+      setSaving(true);
 
       const formattedPrice = `$${Number(cleanPrice).toFixed(2)}`;
 
-      await addDoc(collection(db, "products"), {
+      await updateDoc(doc(db, "products", id), {
         itemId: formData.itemId.trim(),
         itemName: formData.itemName.trim(),
         Brand: formData.Brand.trim(),
@@ -97,27 +147,16 @@ export default function AddItemPage() {
         images: imageArray,
       });
 
-      setSuccessMessage("Item added successfully.");
-
-      setFormData({
-        itemId: "",
-        itemName: "",
-        Brand: "",
-        Condition: "",
-        Description: "",
-        Price: "",
-        Qty: "",
-        images: "",
-      });
+      setSuccessMessage("Item updated successfully.");
 
       setTimeout(() => {
         router.push("/admin/inventory");
       }, 800);
     } catch (error) {
-      console.error("Error adding item:", error);
-      setErrorMessage("Failed to add item.");
+      console.error("Error updating item:", error);
+      setErrorMessage("Failed to update item.");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
@@ -127,11 +166,26 @@ export default function AddItemPage() {
       : "border border-black/10 bg-white/80"
     }`;
 
+  if (loading) {
+    return (
+      <>
+        <div className="mb-8 flex items-center gap-5">
+          <h1 className="whitespace-nowrap text-[2.1rem] tracking-[0.06em] text-[#2d241d] font-serif">
+            EDIT ITEM
+          </h1>
+          <div className="h-px w-full bg-[#5e5a56]" />
+        </div>
+
+        <p className="font-sans text-[#2d241d]">Loading item...</p>
+      </>
+    );
+  }
+
   return (
     <>
       <div className="mb-8 flex items-center gap-5">
         <h1 className="whitespace-nowrap text-[2.1rem] tracking-[0.06em] text-[#2d241d] font-serif">
-          ADD ITEM
+          EDIT ITEM
         </h1>
         <div className="h-px w-full bg-[#5e5a56]" />
       </div>
@@ -326,10 +380,10 @@ export default function AddItemPage() {
               <div className="flex w-full max-w-md gap-4">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={saving}
                   className="w-full rounded-xl bg-[#49D357] py-3 text-sm font-sans text-black transition hover:brightness-90 disabled:opacity-70"
                 >
-                  {loading ? "ADDING..." : "ADD ITEM"}
+                  {saving ? "SAVING..." : "SAVE CHANGES"}
                 </button>
 
                 <button
