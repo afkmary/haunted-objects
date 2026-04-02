@@ -143,7 +143,7 @@ export default function ProductDetailsPage() {
 
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
-              <div className="relative mx-auto h-[420px] w-full max-w-[420px] overflow-hidden">
+              <div className="relative mx-auto h-105 w-full max-w-105 overflow-hidden">
                 <img
                   src={allImages[selectedImage] || "/placeholder.png"}
                   alt={product.name}
@@ -180,7 +180,7 @@ export default function ProductDetailsPage() {
               )}
             </div>
 
-            <div className="max-w-[420px] font-sans">
+            <div className="max-w-105 font-sans">
               <h1 className="font-serif text-[2rem] leading-tight text-white">
                 {product.name}
               </h1>
