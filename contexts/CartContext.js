@@ -7,21 +7,23 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       setCartItems(JSON.parse(savedCart));
     }
+    setHydrated(true);
   }, []);
 
   useEffect(() => {
+    if (!hydrated) return;
     localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+  }, [cartItems, hydrated]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
-  const toggleCart = () => setIsCartOpen((prev) => !prev);
 
   const getStockLimit = (product) => {
     const stock =
@@ -34,16 +36,13 @@ export function CartProvider({ children }) {
 
   const addToCart = (product) => {
     const stockLimit = getStockLimit(product);
-
     if (stockLimit <= 0) return;
 
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
 
       if (existing) {
-        if (existing.cartQty >= stockLimit) {
-          return prev;
-        }
+        if (existing.cartQty >= stockLimit) return prev;
 
         return prev.map((item) =>
           item.id === product.id
@@ -68,10 +67,7 @@ export function CartProvider({ children }) {
         if (item.id !== productId) return item;
 
         const stockLimit = getStockLimit(item);
-
-        if (item.cartQty >= stockLimit) {
-          return item;
-        }
+        if (item.cartQty >= stockLimit) return item;
 
         return { ...item, cartQty: item.cartQty + 1 };
       })
@@ -109,9 +105,9 @@ export function CartProvider({ children }) {
       value={{
         cartItems,
         isCartOpen,
+        hydrated,
         openCart,
         closeCart,
-        toggleCart,
         addToCart,
         removeFromCart,
         increaseQty,

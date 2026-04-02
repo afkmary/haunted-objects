@@ -27,7 +27,10 @@ export default function CartDrawer() {
     increaseQty,
     decreaseQty,
     removeFromCart,
+    hydrated,
   } = useCart();
+
+  if (!hydrated) return null;
 
   return (
     <>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, ShoppingCart, User } from "lucide-react";
@@ -7,6 +8,11 @@ import { useCart } from "@/contexts/CartContext";
 
 export default function CustomerNavbar() {
   const { cartCount, openCart } = useCart();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <header className="w-full bg-[#1f1f22] text-white">
@@ -42,15 +48,12 @@ export default function CustomerNavbar() {
           </button>
 
           <button
-            onClick={() => {
-              console.log("cart clicked");
-              openCart();
-            }}
+            onClick={openCart}
             className="relative hover:text-white transition"
           >
             <ShoppingCart size={20} />
 
-            {cartCount > 0 && (
+            {mounted && cartCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-black">
                 {cartCount}
               </span>
