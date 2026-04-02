@@ -1,6 +1,7 @@
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Poppins, Cormorant } from "next/font/google";
 import "./globals.css";
-import { Poppins, Cormorant } from "next/font/google";
+import { CartProvider } from "@/contexts/CartContext";
+import CartDrawer from "@/components/customer/CartDrawer";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -32,10 +33,14 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} ${cormorant.variable}`}>
-        {children}
+      <body
+        className={`${poppins.variable} ${cormorant.variable} ${geistSans.variable} ${geistMono.variable}`}
+      >
+        <CartProvider>
+          {children}
+          <CartDrawer />
+        </CartProvider>
       </body>
     </html>
   );
 }
-

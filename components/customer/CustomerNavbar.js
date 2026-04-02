@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Search, ShoppingCart, User } from "lucide-react";
+import { ChevronDown, ShoppingCart, User } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 
 export default function CustomerNavbar() {
+  const { cartCount, openCart } = useCart();
+
   return (
     <header className="w-full bg-[#1f1f22] text-white">
       <div className="flex items-center justify-between px-6 py-3">
@@ -12,13 +15,13 @@ export default function CustomerNavbar() {
           <Image
             src="/hauntedlogo.png"
             alt="Haunted Objects logo"
-            width={38}
-            height={38}
-            className="object-contain opacity-40"
+            width={40}
+            height={40}
+            className="object-contain opacity-70"
             priority
           />
 
-          <nav className="hidden md:flex items-center gap-6 text-[11px] font-sans tracking-[0.08em] uppercase text-white/80">
+          <nav className="hidden md:flex items-center gap-6 text-[12px] font-sans tracking-[0.08em] uppercase text-white/80">
             <Link href="/" className="hover:text-white transition">
               Shop All
             </Link>
@@ -35,10 +38,23 @@ export default function CustomerNavbar() {
 
         <div className="flex items-center gap-4 text-white/75">
           <button className="hover:text-white transition">
-            <User size={16} />
+            <User size={20} />
           </button>
-          <button className="hover:text-white transition">
-            <ShoppingCart size={16} />
+
+          <button
+            onClick={() => {
+              console.log("cart clicked");
+              openCart();
+            }}
+            className="relative hover:text-white transition"
+          >
+            <ShoppingCart size={20} />
+
+            {cartCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white text-[10px] font-semibold text-black">
+                {cartCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
