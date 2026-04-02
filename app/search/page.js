@@ -9,7 +9,9 @@ import ProductCard from "@/components/customer/ProductCard";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
-  const query = searchParams.get("q") || "";
+  const query = useMemo(() => {
+    return searchParams?.get("q") || "";
+  }, [searchParams]);
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,10 +54,14 @@ export default function SearchPage() {
     if (!trimmed) return products;
 
     return products.filter((product) => {
+      const name = product.name?.toLowerCase() || "";
+      const brand = product.brand?.toLowerCase() || "";
+      const condition = product.condition?.toLowerCase() || "";
+
       return (
-        product.name.toLowerCase().includes(trimmed) ||
-        product.brand.toLowerCase().includes(trimmed) ||
-        product.condition.toLowerCase().includes(trimmed)
+        name.includes(trimmed) ||
+        brand.includes(trimmed) ||
+        condition.includes(trimmed)
       );
     });
   }, [products, query]);
