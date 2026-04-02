@@ -1,17 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import CustomerNavbar from "@/components/customer/CustomerNavbar";
 import ProductCard from "@/components/customer/ProductCard";
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
-  const query = useMemo(() => {
-    return searchParams?.get("q") || "";
-  }, [searchParams]);
+  const query = searchParams?.get("q") || "";
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +26,10 @@ export default function SearchPage() {
             id: docSnapshot.id,
             itemId: data.itemId || "",
             name: data.itemName || "Untitled Product",
-            price: parseFloat(String(data.Price || "0").replace("$", "")) || 0,
+            price:
+              typeof data.Price === "string"
+                ? parseFloat(data.Price.replace(/[$,]/g, "")) || 0
+                : Number(data.Price || 0),
             image: data.image || "",
             images: Array.isArray(data.images) ? data.images : [],
             brand: data.Brand || "",
@@ -101,5 +102,22 @@ export default function SearchPage() {
         )}
       </section>
     </main>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-[#6f6f6f] text-white">
+          <CustomerNavbar />
+          <section className="px-6 pb-14 pt-6">
+            <p className="font-sans text-white/70">Loading search...</p>
+          </section>
+        </main>
+      }
+    >
+      <SearchContent />
+    </Suspense>
   );
 }
