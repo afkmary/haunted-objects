@@ -59,7 +59,9 @@ export default function EditItemPage() {
           Description: data.Description || "",
           Price: data.Price || "",
           Qty: data.Qty || "",
-          images: imageList.map((img) => img.replace(/^\//, "")).join(", "),
+          images: imageList
+            .map((img) => img.replace(/^\/?products\//, ""))
+            .join(", "),
         });
       } catch (error) {
         console.error("Error fetching item:", error);
@@ -122,7 +124,7 @@ export default function EditItemPage() {
       .map((img) =>
         img.startsWith("/products/")
           ? img
-          : `/products/${img.replace(/^\//, "")}`
+          : `/products/${img.replace(/^\/?products\//, "").replace(/^\//, "")}`
       );
 
     if (formData.images.trim() && imageArray.length === 0) {
