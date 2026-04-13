@@ -148,9 +148,9 @@ export default function EditItemPage() {
         Description: formData.Description.trim(),
         Price: formattedPrice,
         Qty: formData.Qty.trim(),
+        image: imageArray[0] || "",
         images: imageArray,
       });
-
       setSuccessMessage("Item updated successfully.");
 
       setTimeout(() => {
